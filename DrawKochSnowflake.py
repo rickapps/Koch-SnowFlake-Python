@@ -115,59 +115,58 @@ class KochSnowFlake:
 
         return side
        
+class DrawFlake:
+    ''' Uses the Turtle module to draw snowflakes'''
+
+    def __init__(self):
+        self.t = turtle.Turtle()
+        self.s = turtle.Screen()
+        # set cursor shape
+        self.t.shape('turtle')
+        # set to 80% screen width
+        self.s.setup(width=0.8)
+        self.s.title("Koch Snowflake")
+
+    def draw(self, xc, yc, xv, yv, level):
+        ''' Draw a snowflake with the specified center, vertex, and level '''
+        flake = KochSnowFlake(xc, yc, xv, yv) 
+        self.t.up()
+        self.t.setpos(flake.VertexA)
+        self.t.down()
+        edges = flake.generateSide(flake.VertexA, flake.VertexB, level)
+        for point in edges:
+            self.t.setpos(point)
+        edges = flake.generateSide(flake.VertexB, flake.VertexC, level)
+        for point in edges:
+            self.t.setpos(point)
+        edges = flake.generateSide(flake.VertexC, flake.VertexA, level)
+        for point in edges:
+            self.t.setpos(point)
 
 
 def TestSnowflake():
-    # use sys.argv if needed
-    print('Generating an equilateral triangle...')
-    # create parser
-    descStr = """This program draws an equilateral triangle using the Turtle module. 
-    When run with no arguments, this program draws a small triangle centered at the origin.
-    
-    Terminology:
+    ''' Draws a series of concentric Koch snowflakes with consecutive levels '''
+    print('Generating snowflakes...')
 
-    cx, cy: centroid of the triangle.
-    vx, vy: one vertex of the triangle.
-    """
-    parser = argparse.ArgumentParser(description=descStr)
-  
-    # add expected arguments
-    parser.add_argument('--sparams', nargs=4, dest='sparams', required=False, 
-                        help="The four arguments in sparams: cx, cy, vx, vy.")
-                        
+    flake = DrawFlake()
+    color = ('black', 'red', 'green', 'blue')  
+    # We will center the snowflake at the origin with one vertex on the y axis
+    xc = 0.0
+    yc = 0.0
+    xv = 0.0
+    yv = 20.0
+    # Set the number of snowflakes to draw.
+    N = 7  
+    # Draw our snowflakes
+    for i in range(N):
+        flake.t.color(color[i%len(color)])
+        # Set the altitude of our triangle to ever increasing heights
+        yv = yv + i * 10
+        # Draw the snowflake using level i
+        flake.draw(xc,yc,xv,yv,i)
 
-    # parse args
-    args = parser.parse_args()
-
-    t = turtle.Turtle()
-    s = turtle.Screen()
-    # set to 80% screen width
-    s.setup(width=0.8)
-
-    # set cursor shape
-    t.shape('turtle')
-
-    # set title
-    s.title("Equilateral Triangle")
-    t.color('red', 'yellow')
-   # hide main turtle cursor
-    t.up()
-    if args.sparams:
-        params = [float(x) for x in args.sparams]
-    flake = KochSnowFlake(*params)
-    t.setpos(flake.VertexA)
-    t.down()
-    edges = flake.generateSide(flake.VertexA, flake.VertexB, 3)
-    for point in edges:
-        t.setpos(point)
-    edges = flake.generateSide(flake.VertexB, flake.VertexC, 3)
-    for point in edges:
-        t.setpos(point)
-    edges = flake.generateSide(flake.VertexC, flake.VertexA, 3)
-    for point in edges:
-        t.setpos(point)
-    # start turtle main loop
-    s.mainloop()
+    # Keep the window open
+    flake.s.mainloop()
 
 # call main
 if __name__ == '__main__':
