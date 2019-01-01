@@ -104,15 +104,16 @@ class KochSnowFlake:
         at least three times - once for each side.'''
         if level > 1:
             points = self.splitSegment(vertex1, vertex2)
-            points.extend(self.generateSide(points[0], points[1], level-1))
-            points.extend(self.generateSide(points[1], points[2], level-1))
-            points.extend(self.generateSide(points[2], vertex2, level-1))
+            side = self.generateSide(vertex1, points[0], level-1)
+            side.extend(self.generateSide(points[0], points[1], level-1))
+            side.extend(self.generateSide(points[1], points[2], level-1))
+            side.extend(self.generateSide(points[2], vertex2, level-1))
         elif level == 1:
-            points = self.splitSegment(vertex1, vertex2)
+            side = self.splitSegment(vertex1, vertex2)
         else:
-            points = [vertex2]
+            side = [vertex2]
 
-        return points
+        return side
        
 
 
@@ -156,13 +157,13 @@ def TestSnowflake():
     flake = KochSnowFlake(*params)
     t.setpos(flake.VertexA)
     t.down()
-    edges = flake.generateSide(flake.VertexA, flake.VertexB, 2)
+    edges = flake.generateSide(flake.VertexA, flake.VertexB, 3)
     for point in edges:
         t.setpos(point)
-    edges = flake.generateSide(flake.VertexB, flake.VertexC, 2)
+    edges = flake.generateSide(flake.VertexB, flake.VertexC, 3)
     for point in edges:
         t.setpos(point)
-    edges = flake.generateSide(flake.VertexC, flake.VertexA, 2)
+    edges = flake.generateSide(flake.VertexC, flake.VertexA, 3)
     for point in edges:
         t.setpos(point)
     # start turtle main loop
